@@ -12,6 +12,6 @@ public class Controller {
 
     @GetMapping("/hello-aws")
     public String helloAws(){
-        return "------Hello Sejal , This is AWS-DEMO for EC2--------";
+        return "------Hello Avinash , This is AWS-DEMO for EC2--------";
     }
 }
