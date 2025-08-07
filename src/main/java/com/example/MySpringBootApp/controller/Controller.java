@@ -9,4 +9,9 @@ public class Controller {
     public String Hello(){
         return "Hello... , This Jar Was packaged by jenkins Server ";
     }
+
+    @GetMapping("/hello-aws")
+    public String helloAws(){
+        return "Hello AWS";
+    }
 }
