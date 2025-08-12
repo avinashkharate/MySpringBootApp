@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Product</title>
+    <style>
+        body { font-family: Arial; background: #f4f4f4; padding: 20px; }
+        h1 { text-align: center; }
+        form {
+            background: white; padding: 20px; max-width: 400px;
+            margin: auto; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        input, button {
+            width: 100%; padding: 10px; margin: 5px 0;
+        }
+        button { background: #4CAF50; color: white; border: none; }
+    </style>
+</head>
+<body>
+<h1>Add Product</h1>
+<form id="productForm">
+    <input type="text" name="name" placeholder="Product Name" required>
+    <input type="number" name="price" placeholder="Price" required>
+    <button type="submit">Save Product</button>
+</form>
+
+<script>
+    document.getElementById('productForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = {
+            name: e.target.name.value,
+            price: e.target.price.value
+        };
+        fetch('/product', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+        }).then(res => res.json())
+          .then(data => alert('Product saved: ' + JSON.stringify(data)));
+    });
+</script>
+</body>
+</html>
