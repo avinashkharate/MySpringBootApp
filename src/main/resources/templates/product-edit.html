@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Product</title>
+    <style>
+        body { font-family: Arial; background: #f4f4f4; padding: 20px; }
+        h1 { text-align: center; }
+        form {
+            background: white; padding: 20px; max-width: 400px;
+            margin: auto; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        input, button {
+            width: 100%; padding: 10px; margin: 5px 0;
+        }
+        button { background: #2196F3; color: white; border: none; }
+    </style>
+</head>
+<body>
+<h1>Edit Product</h1>
+<form id="editForm">
+    <input type="hidden" id="productId">
+    <input type="text" id="name" placeholder="Product Name" required>
+    <input type="number" id="price" placeholder="Price" required>
+    <button type="submit">Update Product</button>
+</form>
+
+<script>
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+
+    // Load existing product details
+    fetch(`/products`)
+        .then(res => res.json())
+        .then(products => {
+            const product = products.find(p => p.id == id);
+            if (product) {
+                document.getElementById("productId").value = product.id;
+                document.getElementById("name").value = product.name;
+                document.getElementById("price").value = product.price;
+            } else {
+                alert("Product not found!");
+            }
+        });
+
+    // Handle form submission
+    document.getElementById("editForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const updatedData = {
+            name: document.getElementById("name").value,
+            price: document.getElementById("price").value
+        };
+        fetch(`/product/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updatedData)
+        })
+        .then(res => res.json())
+        .then(data => alert("Product updated successfully!"));
+    });
+</script>
+</body>
+</html>
