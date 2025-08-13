@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  my-mysql:
+    image: mysql:8
+    container_name: my-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: admin1234
+      MYSQL_DATABASE: inventory
+    ports:
+      - "3307:3307"        # Maps host 3307 → container 3307
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - my-network
+
+  springboot-app:
+    image: myspringbootapp-app:latest   # Make sure you build this image first
+    container_name: springboot-app
+    restart: unless-stopped
+    ports:
+      - "9191:8080"       # Maps host 9191 → container 8080
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mysql://my-mysql:3307/inventory
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: admin1234
+    depends_on:
+      - my-mysql
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
