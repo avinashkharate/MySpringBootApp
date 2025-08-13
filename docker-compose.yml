@@ -1,39 +1,38 @@
 version: "3.9"
 
+networks:
+  my-network:
+
 services:
   my-mysql:
     image: mysql:8
     container_name: my-mysql
-    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: admin1234
       MYSQL_DATABASE: inventory
+      MYSQL_USER: root
+      MYSQL_PASSWORD: admin1234
     ports:
-      - "3307:3307"        # Maps host 3307 → container 3307
-    volumes:
-      - mysql-data:/var/lib/mysql
+      - "3307:3307"    # Exposed as 3307 on host to avoid conflicts
     networks:
       - my-network
+    volumes:
+      - mysql-data:/var/lib/mysql
 
   springboot-app:
-    image: myspringbootapp-app:latest   # Make sure you build this image first
+    build: .           # Build from local Dockerfile
     container_name: springboot-app
-    restart: unless-stopped
-    ports:
-      - "9191:8080"       # Maps host 9191 → container 8080
     environment:
       SPRING_PROFILES_ACTIVE: prod
       SPRING_DATASOURCE_URL: jdbc:mysql://my-mysql:3307/inventory
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: admin1234
+    ports:
+      - "8080:8080"
     depends_on:
       - my-mysql
     networks:
       - my-network
-
-networks:
-  my-network:
-    driver: bridge
 
 volumes:
   mysql-data:
