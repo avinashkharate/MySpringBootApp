@@ -1,38 +1,33 @@
-version: "3.9"
-
-networks:
-  my-network:
+version: '3.8'
 
 services:
   my-mysql:
     image: mysql:8
     container_name: my-mysql
+    restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: admin1234
+      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: inventory
-      MYSQL_USER: root
-      MYSQL_PASSWORD: admin1234
     ports:
-      - "3307:3307"    # Exposed as 3307 on host to avoid conflicts
-    networks:
-      - my-network
-    volumes:
-      - mysql-data:/var/lib/mysql
+      - "3307:3306"   # Host 3307 → Container 3306
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      retries: 10
+      timeout: 5s
 
   springboot-app:
-    build: .           # Build from local Dockerfile
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: springboot-app
-    environment:
-      SPRING_PROFILES_ACTIVE: prod
-      SPRING_DATASOURCE_URL: jdbc:mysql://my-mysql:3307/inventory
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: admin1234
+    restart: always
     ports:
       - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://my-mysql:3306/inventory
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
     depends_on:
-      - my-mysql
-    networks:
-      - my-network
-
-volumes:
-  mysql-data:
+      my-mysql:
+        condition: service_healthy
