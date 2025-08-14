@@ -35,8 +35,14 @@
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData)
-        }).then(res => res.json())
-          .then(data => alert('Product saved: ' + JSON.stringify(data)));
+        })
+        .then(res => {
+            if (res.ok) {
+                window.location.href = '/products'; // Redirect after POST
+            } else {
+                alert('Error saving product');
+            }
+        });
     });
 </script>
 </body>
