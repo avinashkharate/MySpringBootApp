@@ -6,18 +6,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class ProductUIController {
 
-    @GetMapping(value = "/product", produces = "text/html")
-    public String productForm() {
-        return "product"; // Add form (POST)
+    @GetMapping("/products")
+    public String productsPage() {
+        return "products"; // products.html from /templates
     }
 
-    @GetMapping(value = "/products", produces = "text/html")
-    public String productList() {
-        return "products"; // List page (GET)
+    @GetMapping("/product")
+    public String addProductPage() {
+        return "product"; // product.html from /templates
     }
 
-    @GetMapping(value = "/product-edit", produces = "text/html")
+    @GetMapping("/product-edit")
     public String editProductPage() {
-        return "product-edit"; // Edit form (PUT)
+        return "product"; // reuse same form page
     }
 }
